@@ -40,13 +40,13 @@ const StockAppComponent = () => {
   }, []);
 
   const StockTable = ({ stockName, bids }) => {
-    const [fontColor, setFontColor] = useState('black');
+    const [fontColor, setFontColor] = useState('white');
 
     useEffect(() => {
       if (bids && bids.length > 0) {
-        setFontColor('red');
+        setFontColor('grey');
         const timeout = setTimeout(() => {
-          setFontColor('black');
+          setFontColor('white');
         }, 1000);
 
         return () => clearTimeout(timeout);
@@ -56,18 +56,18 @@ const StockAppComponent = () => {
     return (
       <div style={{ display: 'inline-block', margin: '50px' }}>
         {bids && bids.length > 0 ? (
-          <table style={{ borderCollapse: 'collapse', border: '1px solid black' }}>
+          <table style={{ borderCollapse: 'collapse', border: '1px solid white' }}>
             <thead>
               <tr>
-                <th style={{ border: '1px solid black', padding: '5px' }}>Bid Price</th>
-                <th style={{ border: '1px solid black', padding: '5px' }}>Ask Price</th>
+                <th style={{ border: '1px solid white', padding: '5px' }}>Bid Price</th>
+                <th style={{ border: '1px solid white', padding: '5px' }}>Ask Price</th>
               </tr>
             </thead>
             <tbody>
               {bids.map((bid, index) => (
                 <tr key={index}>
-                  <td style={{ border: '1px solid black', padding: '5px', color: fontColor }}>{bid.bidPrice}</td>
-                  <td style={{ border: '1px solid black', padding: '5px', color: fontColor }}>{bid.askPrice}</td>
+                  <td style={{ border: '1px solid white', padding: '5px', color: fontColor }}>{bid.bidPrice}</td>
+                  <td style={{ border: '1px solid white', padding: '5px', color: fontColor }}>{bid.askPrice}</td>
                 </tr>
               ))}
             </tbody>
@@ -79,37 +79,51 @@ const StockAppComponent = () => {
     );
   };
 
-  const OrderTable = () => (
-    <div >
-      <center>
-        <h2>Order Table</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Stock Name</th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <th>Bid Price</th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <th>Ask Price</th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <th>Date & Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orderTable.map((order, index) => (
-              <tr key={index}>
-                <td>{order.stockName}</td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <td>{order.bidPrice}</td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <td>{order.askPrice}</td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <td>{order.dateTime}</td>
+  const OrderTable = () => {
+    const [latestOrders, setLatestOrders] = useState([]);
+    useEffect(() => {
+      if (orderTable.length > 0) {
+        const latestFiveOrders = orderTable.slice(Math.max(orderTable.length - 5, 0)).reverse();
+        setLatestOrders(latestFiveOrders);
+        const interval = setInterval(() => {
+          const updatedOrders = orderTable.slice(Math.max(orderTable.length - 5, 0)).reverse();
+          setLatestOrders(updatedOrders);
+        }, 1000);
+        return () => clearInterval(interval);
+      }
+    }, [orderTable]);
+    return (
+      <div>
+        <center>
+          <h2>Order Table</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Stock Name</th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <th>Bid Price</th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <th>Ask Price</th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <th>Date & Time</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </center>
-    </div>
-  );
+            </thead>
+            <tbody>
+              {latestOrders.map((order, index) => (
+                <tr key={index}>
+                  <td>{order.stockName}</td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <td>{order.bidPrice}</td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <td>{order.askPrice}</td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <td>{order.dateTime}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </center>
+      </div>
+    );
+  };
 
   return (
-    <div style={{ backgroundImage: 'url("https://img.freepik.com/premium-vector/business-candle-stick-graph-chart-stock-market-investment-trading-white-background-design-bullish-point-trend-graph-vector-illustration_41981-1777.jpg?w=2000")', backgroundSize: 'cover', minHeight: '100vh' }}>
-      <h2>Bid Price and Ask Price</h2>
+    <div style={{ backgroundImage: 'url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr7tn1olR4WEsFMlcj2IFo9XBttCMOp6hvyw&usqp=CAU")', backgroundSize: 'cover', minHeight: '100vh' }}>
+      <h2>Bid and Ask Price</h2>
       <div>
         <h2>
           Apple &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
